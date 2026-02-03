@@ -1,0 +1,449 @@
+erDiagram
+    %% ============================================
+    %% ERIKA - Kompletní ERD based on Metros
+    %% ============================================
+
+    %% === CORE: Mandant & Kunde ===
+
+    Mandant ||--o{ Projekt : "vlastni"
+    Kunde ||--o{ Projekt : "objednava"
+
+    Mandant {
+        string name PK "metron Vilshofen"
+        string shortcode "mv"
+        string adresse
+        string plz_ort
+        string telefon
+        string fax
+        string email
+        string web
+        string steuernummer
+        string ust_id
+        string bankverbindung
+        boolean active
+    }
+
+    Kunde {
+        string name PK
+        string firma "Dr. Ing. h.c. F. Porsche AG"
+        string adresse
+        string plz_ort
+        string land
+        string telefon
+        string fax
+        string email
+        string web
+        string kontakt_person
+        string kontakt_telefon
+        string kontakt_email
+        string kundennummer
+        string steuernummer
+        string zahlungsbedingungen
+        text bemerkungen
+    }
+
+    %% === CORE: Projekt ===
+
+    Projekt ||--o{ Leistung : "obsahuje"
+    Projekt ||--o{ BudgetVerfolgung : "sleduje"
+    Projekt ||--o{ Case : "pouziva"
+    Projekt ||--o{ Transport : "planuje"
+    Projekt ||--o{ Fremdfertigung : "zadava"
+    Projekt ||--o{ Besprechungsprotokoll : "dokumentuje"
+    Projekt ||--o{ Hebezeug : "potrebuje"
+    Projekt ||--o{ ProjektDokument : "archivuje"
+    Projekt }o--o{ Mitarbeiter : "team"
+
+    Projekt {
+        string projekt_nr PK "v3081"
+        string pa_nummer UK "PA 2018 003447"
+        string titel "IAA Frankfurt 2024"
+        string untertitel
+        link kunde FK
+        link mandant FK
+        select geschaeftsfeld "Messe|Event|Bau|Specials|Akquise|Sonstiges"
+        link projekt_manager FK
+        link client_service_manager FK
+        link konstrukteur FK
+        string veranstaltung "IAA"
+        string veranstaltungsort "Frankfurt Messe"
+        string halle_stand "Halle 3 Stand A42"
+        date veranstaltung_von
+        date veranstaltung_bis
+        date angebot_datum
+        date zusagen_datum
+        date auftrag_datum
+        date produktionsstart_datum
+        date montage_von
+        date montage_bis
+        date demontage_von
+        date demontage_bis
+        date projektabschluss_datum
+        date rechnung_datum
+        date zahlung_datum
+        date erledigt_datum
+        currency angebotswert_gesamt
+        currency auftragswert_gesamt
+        percent rohertrag_vorgabe "30-40%"
+        percent rohertrag_plan
+        percent rohertrag_aktuell
+        int team_count
+        select status "Angebot|Zusage|Auftrag|Produktion|Montage|Messe|Demontage|Abrechnung|Erledigt"
+        boolean schrank_checkbox
+        text bemerkungen
+    }
+
+    %% === LEISTUNG (Services/Performances) ===
+
+    Leistung ||--o{ LeistungAngebot : "versionen"
+    Leistung ||--o{ AblaufElement : "produktion"
+
+    Leistung {
+        string leistung_nr PK "v21011"
+        link projekt FK
+        string bezeichnung "Standbau VHE"
+        string bezeichnung_detail
+        select kategorie "Standbau|Montage|Demontage|Stahlbau|Elektro|Beleuchtung|Moebel|Fassade|Wandbau|Deckenbau|Boden|Podeste|Grafik|Beschriftung|Exponate|Transport|Logistik"
+        select leistungsart "BWa|EW"
+        string kundenpos "1.1"
+        currency einzelpreis
+        float menge
+        string einheit "Stk|m2|m|Pausch"
+        currency angebotswert
+        currency auftragswert
+        percent rabatt
+        select angebot_status "angeboten|beauftragt|verworfen"
+        boolean hb_marker
+        boolean ff_marker
+        boolean fa_marker
+        date liefertermin
+        text technische_details
+        text bemerkungen
+    }
+
+    LeistungAngebot {
+        string angebot_nr PK "A19/v3081-v21011"
+        link leistung FK
+        int version
+        currency preis
+        date datum
+        link erstellt_von FK
+        select status "Entwurf|Gesendet|Akzeptiert|Abgelehnt"
+        text aenderungen
+    }
+
+    %% === LOGISTICS: Case & Colli ===
+
+    Case ||--o{ Colli : "enthaelt"
+    Colli }o--|| ColliArt : "typ"
+    Transport ||--o{ TransportColli : "laedt"
+    TransportColli }o--|| Colli : "colli"
+
+    Case {
+        string case_nr PK "Case-001"
+        link projekt FK
+        select case_typ "Alu_Travelcase|Alu_Fahrgestell|Fire_Screen|Logis_Tower|Alu_Airline|Standard"
+        string bezeichnung "Beleuchtung Set A"
+        string inventar_nr
+        float laenge_cm
+        float breite_cm
+        float hoehe_cm
+        float gewicht_kg
+        currency versicherungswert
+        int colli_count
+        select status "Lager|Gepackt|Transport|Messe|Ruecktransport"
+        string lagerort
+        string lagerplatz
+        text inhalt_beschreibung
+    }
+
+    Colli {
+        string colli_nr PK "Cv3081/001"
+        link case FK
+        link projekt FK
+        link colli_art FK
+        string bezeichnung "LED Panels 50x50"
+        int lfd_nr "1-614"
+        float laenge_cm
+        float breite_cm
+        float hoehe_cm
+        float gewicht_kg
+        currency versicherungswert
+        string position
+        string lagerort
+        string lagerplatz
+        date einlagerung_datum
+        date auslagerung_datum
+        date anlieferung_geplant
+        date anlieferung_ist
+        date ruecklieferung_geplant
+        date ruecklieferung_ist
+        select status "Lager|Zugeordnet|AufBestaetigung|AufTransport|Unterwegs|Messe|RueckTransport|Eingelagert"
+        text inhalt
+        text bemerkungen
+    }
+
+    ColliArt {
+        string name PK "Europalette"
+        string beschreibung
+        float standard_laenge
+        float standard_breite
+        float standard_hoehe
+        float max_gewicht
+        boolean stapelbar
+        string kategorie "Palette|Container|Kiste|Case|Sonstige"
+    }
+
+    %% === TRANSPORT ===
+
+    Transport }o--|| Spedition : "durchgefuehrt"
+
+    Transport {
+        string transport_nr PK "T-v3081-001"
+        link projekt FK
+        link spedition FK
+        select typ "Anlieferung|Ruecklieferung|Intern"
+        string ladung_ort "Vilshofen Lager"
+        string ladung_adresse
+        string entladung_ort "Frankfurt Messe Halle 3"
+        string entladung_adresse
+        link ladung_kontakt FK
+        link entladung_kontakt FK
+        string ladung_kontakt_tel
+        string entladung_kontakt_tel
+        date ladung_datum
+        time ladung_zeit
+        date entladung_datum
+        time entladung_zeit
+        int anzahl_lkw
+        string lkw_typ "7.5t|12t|40t|Sattel"
+        currency frachtkosten
+        string frachtbrief_nr
+        string proforma_nr
+        select status "Geplant|Bestaetigt|Beladen|Unterwegs|Geliefert|Abgeschlossen"
+        text bemerkungen
+    }
+
+    TransportColli {
+        link transport FK
+        link colli FK
+        int reihenfolge
+        boolean geladen
+        boolean entladen
+    }
+
+    Spedition {
+        string name PK "Schnellmann Logistik"
+        string adresse
+        string plz_ort
+        string telefon
+        string fax
+        string email
+        string kontakt_person
+        string kundennummer
+        text bemerkungen
+    }
+
+    %% === HEBEZEUGE (Lifting Equipment) ===
+
+    Hebezeug {
+        link projekt FK
+        select typ "Ameise|Scherenhubuehne|Stapler|Kran|Teleskop"
+        string bezeichnung "Ameise 4.5m"
+        string spezifikation
+        float hoehe_m
+        float tragkraft_kg
+        int menge
+        string sonder_ausstattung
+        string verwendung
+        date von_datum
+        date bis_datum
+        link lieferant FK
+        currency mietkosten
+        text bemerkungen
+    }
+
+    %% === BUDGET & FINANCE ===
+
+    BudgetVerfolgung }o--|| BudgetPosition : "kategorie"
+
+    BudgetPosition {
+        int position_nr PK "0-17"
+        string name "Organisation"
+        string beschreibung
+        select gruppe "Intern|Extern|Material|Reise|Logistik"
+        boolean aktiv
+    }
+
+    BudgetVerfolgung {
+        link projekt FK
+        link position FK
+        currency auftragswert
+        currency budget
+        currency obligo
+        currency rechnungen
+        currency kostenstand
+        currency differenz
+        currency prognose
+        text bemerkungen
+    }
+
+    %% === FREMDFERTIGUNG (External Manufacturing) ===
+
+    Fremdfertigung }o--|| Firma : "auftragnehmer"
+    Fremdfertigung }o--o| Leistung : "fuer"
+
+    Firma {
+        string name PK "Glas Dersch GmbH"
+        string firma_typ "Lieferant|Subunternehmer|Dienstleister"
+        string adresse
+        string plz_ort
+        string land
+        string telefon
+        string fax
+        string email
+        string web
+        string kontakt_person
+        string kontakt_telefon
+        string steuernummer
+        string ust_id
+        string bankverbindung
+        string lieferantennummer
+        select zahlungsziel "sofort|14_Tage|30_Tage|60_Tage"
+        select bewertung "A|B|C"
+        text bemerkungen
+    }
+
+    Fremdfertigung {
+        string ff_nr PK "FFv26916/006"
+        link projekt FK
+        link firma FK
+        link leistung FK
+        select kategorie "Fremdfertigungsauftrag|Leistungsauftrag|Transportauftrag|Vermietung|Stornierung"
+        string ff_leistung "Glasscheiben nach Zeichnung"
+        string lv_pos
+        string bg_position
+        int menge
+        string einheit
+        currency einzelpreis
+        currency vereinbarter_gesamtpreis
+        currency auftragswert_intern
+        date bestelldatum
+        date liefertermin
+        date geliefert_datum
+        link absender FK
+        select status "Angefragt|Bestellt|InProduktion|Geliefert|Abgerechnet|Storniert"
+        text technische_angaben
+        text bemerkungen
+    }
+
+    %% === PRODUCTION CONTROL (Ablaufsteuerung) ===
+
+    AblaufElement {
+        link leistung FK
+        int zeile
+        string bezeichnung "HEA 300 Profil"
+        string lv_pos
+        string zb "Zusammenbau"
+        string bg "Baugruppe"
+        string et "Einzelteil"
+        string vt "Vorfertigung"
+        string rt "Ruecktransport"
+        int menge
+        select status "Offen|Material|InArbeit|Montiert|Fertig|Problem"
+        date geplant_datum
+        date fertig_datum
+        link verantwortlich FK
+        text bemerkungen
+    }
+
+    %% === HR: Mitarbeiter & Abwesenheit ===
+
+    Mitarbeiter ||--o{ Abwesenheit : "plant"
+    Mitarbeiter ||--o{ MitarbeiterProjekt : "arbeitet"
+    MitarbeiterProjekt }o--|| Projekt : "an"
+
+    Mitarbeiter {
+        string name PK "Wolf"
+        string vorname "Michael"
+        string email
+        string telefon
+        string mobil
+        link user FK
+        select rolle "Geschaeftsfuehrer|Projekt_Manager|Client_Service|Konstrukteur|Monteur|Lager|Verwaltung"
+        select abteilung "Leitung|Projektmanagement|Konstruktion|Produktion|Montage|Verwaltung"
+        date eintrittsdatum
+        float wochenstunden
+        currency stundensatz_intern
+        currency stundensatz_extern
+        boolean aktiv
+        text qualifikationen
+    }
+
+    MitarbeiterProjekt {
+        link mitarbeiter FK
+        link projekt FK
+        select rolle "Projekt_Manager|Client_Service|Konstrukteur|Monteur|Helfer"
+        date von_datum
+        date bis_datum
+        float geplante_stunden
+        float ist_stunden
+    }
+
+    Abwesenheit {
+        link mitarbeiter FK
+        date von_datum
+        date bis_datum
+        select typ "Urlaub|Krank|Dienstreise|Schulung|Arbeitsort_Extern|Sonderurlaub"
+        select status "Geplant|Beantragt|Genehmigt|Abgelehnt|Storniert"
+        string arbeitsort "Vilshofen|Frankfurt|Muenchen"
+        link genehmigt_von FK
+        date genehmigt_am
+        text bemerkungen
+    }
+
+    %% === DOCUMENTATION ===
+
+    Besprechungsprotokoll {
+        link projekt FK
+        string titel "Kickoff Meeting"
+        date datum
+        time uhrzeit
+        string ort
+        text teilnehmer
+        text agenda
+        text inhalt
+        text beschluesse
+        text naechste_schritte
+        text bemerkungen
+        select lv_timeline_status "Offen|InArbeit|Erledigt"
+        select lv_umsetzung_status "Offen|InArbeit|Erledigt"
+        select material_status "Offen|Bestellt|Bereit"
+        link erstellt_von FK
+        date erstellt_am
+    }
+
+    ProjektDokument {
+        link projekt FK
+        string titel
+        select kategorie "Kundenanfrage|Ausschreibung|Angebot|Auftragsbestaetigung|Zeichnung|Foto|Rechnung|Lieferschein|Protokoll|Sonstiges"
+        string dateiname
+        string dateipfad
+        date datum
+        link hochgeladen_von FK
+        text beschreibung
+    }
+
+    %% === MESSE SPECIAL (Fair/Event Areas) ===
+
+    Projekt ||--o{ MesseBereich : "gliedert"
+
+    MesseBereich {
+        link projekt FK
+        string bereich_nr "84-03"
+        string bezeichnung "Standbegrenzung"
+        select kategorie "Standbegrenzung|Systemwaende|Glasscheiben|Shop|Moeblierung|Elektrik|Beleuchtung|Exponate|Drehvorrichtung|Hebevorrichtung"
+        float flaeche_m2
+        currency budget
+        text beschreibung
+    }

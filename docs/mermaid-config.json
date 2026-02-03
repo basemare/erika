@@ -1,0 +1,41 @@
+{
+  "theme": "base",
+  "themeVariables": {
+    "darkMode": true,
+    "primaryColor": "#000000",
+    "primaryTextColor": "#ffffff",
+    "primaryBorderColor": "#ffffff",
+    "lineColor": "#ffffff",
+    "secondaryColor": "#000000",
+    "tertiaryColor": "#000000",
+    "background": "#000000",
+    "mainBkg": "#000000",
+    "secondBkg": "#000000",
+    "border1": "#ffffff",
+    "border2": "#ffffff",
+    "arrowheadColor": "#ffffff",
+    "fontFamily": "arial",
+    "fontSize": "14px",
+    "relationColor": "#ffffff",
+    "relationLabelBackground": "#000000",
+    "relationLabelColor": "#ffffff",
+    "entityBorder": "#ffffff",
+    "entityBkg": "#000000",
+    "entityTextColor": "#ffffff",
+    "attributeBackgroundColorOdd": "#000000",
+    "attributeBackgroundColorEven": "#000000",
+    "nodeBkg": "#000000",
+    "nodeTextColor": "#ffffff",
+    "clusterBkg": "#000000",
+    "titleColor": "#ffffff",
+    "edgeLabelBackground": "#000000"
+  },
+  "er": {
+    "useMaxWidth": false,
+    "entityPadding": 15,
+    "stroke": "#ffffff",
+    "fill": "#000000",
+    "attributeBackgroundColorOdd": "#000000",
+    "attributeBackgroundColorEven": "#000000"
+  }
+}

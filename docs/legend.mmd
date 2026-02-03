@@ -1,0 +1,41 @@
+erDiagram
+    %% === LEGENDA - Demonstrace ERD symbolů ===
+
+    PRAVE_JEDEN ||--|| PRAVE_JEDEN_2 : "1:1 povinny"
+
+    JEDEN ||--o{ MNOHO : "1:N povinny-volitelny"
+
+    JEDEN_POVINNY ||--|{ MNOHO_POVINNY : "1:N oba povinne"
+
+    VOLITELNY_JEDEN }o--o{ VOLITELNY_MNOHO : "M:N oba volitelne"
+
+    %% Popisky entit
+    PRAVE_JEDEN {
+        info symbol "||"
+        info vyznam "prave_jeden"
+    }
+
+    JEDEN {
+        info symbol "||"
+        info vyznam "jeden_povinny"
+    }
+
+    MNOHO {
+        info symbol "o-brace"
+        info vyznam "nula_nebo_vice"
+    }
+
+    MNOHO_POVINNY {
+        info symbol "|-brace"
+        info vyznam "jeden_nebo_vice"
+    }
+
+    VOLITELNY_JEDEN {
+        info symbol "o"
+        info vyznam "volitelny"
+    }
+
+    VOLITELNY_MNOHO {
+        info symbol "o-brace"
+        info vyznam "nula_nebo_vice"
+    }

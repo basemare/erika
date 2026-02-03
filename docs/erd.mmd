@@ -1,0 +1,149 @@
+erDiagram
+    %% === CORE ENTITIES ===
+
+    Mandant ||--o{ Projekt : "vlastni"
+    Kunde ||--o{ Projekt : "objednava"
+    Projekt ||--o{ Leistung : "obsahuje"
+    Projekt ||--o{ BudgetVerfolgung : "sleduje"
+    Projekt ||--o{ Case : "pouziva"
+    Projekt ||--o{ Transport : "planuje"
+    Projekt ||--o{ Fremdfertigung : "zadava"
+    Projekt }o--o{ Mitarbeiter : "prirazen"
+
+    %% === LOGISTICS ===
+
+    Case ||--o{ Colli : "obsahuje"
+    Colli }o--|| ColliArt : "typ"
+    Transport ||--o{ Colli : "prepravuje"
+    Projekt ||--o{ Hebezeug : "potrebuje"
+
+    %% === FINANCE ===
+
+    BudgetVerfolgung }o--|| BudgetPosition : "kategorie"
+    Leistung ||--o{ LeistungAngebot : "nabizi"
+
+    %% === PRODUCTION ===
+
+    Leistung ||--o{ AblaufElement : "sleduje"
+    Fremdfertigung }o--|| Firma : "dodavatel"
+
+    %% === HR ===
+
+    Mitarbeiter ||--o{ Abwesenheit : "planuje"
+
+    %% === ENTITY DEFINITIONS ===
+
+    Mandant {
+        string name PK
+        string shortcode
+        boolean active
+    }
+
+    Kunde {
+        string name PK
+        string firma
+        string adresse
+        string kontakt
+    }
+
+    Projekt {
+        string projekt_nr PK
+        string titel
+        link kunde FK
+        link mandant FK
+        select geschaeftsfeld
+        date auftrag_datum
+        percent rohertrag
+        select status
+    }
+
+    Leistung {
+        string leistung_nr PK
+        link projekt FK
+        string bezeichnung
+        currency auftragswert
+        select status
+    }
+
+    Case {
+        string case_nr PK
+        link projekt FK
+        select case_typ
+        int colli_count
+    }
+
+    Colli {
+        string colli_nr PK
+        link case FK
+        link colli_art FK
+        string bezeichnung
+        select status
+    }
+
+    ColliArt {
+        string name PK
+    }
+
+    Transport {
+        string transport_nr PK
+        link projekt FK
+        select typ
+        date datum
+        select status
+    }
+
+    BudgetPosition {
+        int position_nr PK
+        string name
+    }
+
+    BudgetVerfolgung {
+        link projekt FK
+        link position FK
+        currency budget
+        currency obligo
+        currency differenz
+    }
+
+    Fremdfertigung {
+        string ff_nr PK
+        link projekt FK
+        link firma FK
+        currency auftragswert
+    }
+
+    Firma {
+        string name PK
+        string kontakt
+    }
+
+    Mitarbeiter {
+        string name PK
+        select rolle
+        boolean active
+    }
+
+    Abwesenheit {
+        link mitarbeiter FK
+        date von
+        date bis
+        select typ
+    }
+
+    Hebezeug {
+        link projekt FK
+        select typ
+        int menge
+    }
+
+    LeistungAngebot {
+        link leistung FK
+        currency preis
+        select status
+    }
+
+    AblaufElement {
+        link leistung FK
+        string bezeichnung
+        select status
+    }

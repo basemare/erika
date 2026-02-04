@@ -1,6 +1,6 @@
 erDiagram
     %% ============================================
-    %% ERIKA - Kompletní ERD (zkráceno)
+    %% ERIKA - Kompletní ERD (bez smyčky Baugruppe)
     %% ============================================
 
     %% === CORE ===
@@ -16,6 +16,7 @@ erDiagram
     Projekt ||--o{ ProjektDokument : "archivuje"
     Projekt ||--o{ MesseBereich : "gliedert"
     Projekt }o--o{ Mitarbeiter : "team"
+    Mitarbeiter ||--o{ Projekt : "projekt_manager"
 
     Mandant {
         string name PK
@@ -69,16 +70,15 @@ erDiagram
         select status
     }
 
-    %% === MASTERLISTE (stromová struktura) ===
+    %% === MASTERLISTE (plochá struktura - bez stromové hierarchie) ===
     Leistung ||--o{ Baugruppe : "rozdelena"
-    Baugruppe ||--o{ Baugruppe : "parent"
     Baugruppe ||--o{ MasterlistenElement : "obsahuje"
+    MasterlistenElement }o--o| Fremdfertigung : "zadano"
 
     Baugruppe {
         string bg_nr PK
         string bg_path
         link leistung FK
-        link parent FK
         string bezeichnung
         int level
         select status

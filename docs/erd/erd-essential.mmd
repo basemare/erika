@@ -1,6 +1,6 @@
 erDiagram
     %% ============================================
-    %% ERIKA - Kompletní ERD (zkráceno)
+    %% ERIKA - ERD (pouze klíče - grafová struktura)
     %% ============================================
 
     %% === CORE ===
@@ -11,43 +11,23 @@ erDiagram
     Projekt ||--o{ Case : "pouziva"
     Projekt ||--o{ Transport : "planuje"
     Projekt ||--o{ Fremdfertigung : "zadava"
-    Projekt ||--o{ Besprechungsprotokoll : "dokumentuje"
-    Projekt ||--o{ Hebezeug : "potrebuje"
-    Projekt ||--o{ ProjektDokument : "archivuje"
-    Projekt ||--o{ MesseBereich : "gliedert"
     Projekt }o--o{ Mitarbeiter : "team"
+    Mitarbeiter ||--o{ Projekt : "projekt_manager"
 
     Mandant {
         string name PK
-        string shortcode
-        string adresse
-        string kontakt
-        boolean active
     }
 
     Kunde {
         string name PK
-        string firma
-        string adresse
-        string kontakt_person
-        string kundennummer
-        text bemerkungen
     }
 
     Projekt {
         string projekt_nr PK
         string pa_nummer UK
-        string titel
         link kunde FK
         link mandant FK
-        select geschaeftsfeld
         link projekt_manager FK
-        string veranstaltungsort
-        date montage_von
-        date montage_bis
-        currency auftragswert_gesamt
-        percent rohertrag_plan
-        select status
     }
 
     %% === LEISTUNG ===
@@ -56,45 +36,28 @@ erDiagram
     Leistung {
         string leistung_nr PK
         link projekt FK
-        string bezeichnung
-        select kategorie
-        currency auftragswert
-        select status
     }
 
     LeistungAngebot {
         string angebot_nr PK
         link leistung FK
-        currency preis
-        select status
     }
 
-    %% === MASTERLISTE (stromová struktura) ===
+    %% === MASTERLISTE (stromová hierarchie) ===
     Leistung ||--o{ Baugruppe : "rozdelena"
-    Baugruppe ||--o{ Baugruppe : "parent"
+    Baugruppe }o--o| Baugruppe : "parent"
     Baugruppe ||--o{ MasterlistenElement : "obsahuje"
+    MasterlistenElement }o--o| Fremdfertigung : "zadano"
 
     Baugruppe {
         string bg_nr PK
-        string bg_path
         link leistung FK
         link parent FK
-        string bezeichnung
-        int level
-        select status
     }
 
     MasterlistenElement {
         int zeile PK
         link baugruppe FK
-        string bezeichnung
-        string lv_pos
-        int menge
-        select zb_status
-        select bg_status
-        select et_status
-        select vt_status
-        select rt_status
         link fremdfertigung FK
     }
 
@@ -108,57 +71,32 @@ erDiagram
     Case {
         string case_nr PK
         link projekt FK
-        select case_typ
-        string bezeichnung
-        float gewicht_kg
-        select status
     }
 
     Colli {
         string colli_nr PK
         link case FK
         link colli_art FK
-        string bezeichnung
-        float gewicht_kg
-        select status
     }
 
     ColliArt {
         string name PK
-        string kategorie
-        boolean stapelbar
     }
 
     Transport {
         string transport_nr PK
         link projekt FK
         link spedition FK
-        select typ
-        string ladung_ort
-        string entladung_ort
-        date ladung_datum
-        select status
     }
 
     TransportColli {
+        string name PK
         link transport FK
         link colli FK
-        boolean geladen
     }
 
     Spedition {
         string name PK
-        string adresse
-        string kontakt_person
-    }
-
-    %% === HEBEZEUGE ===
-    Hebezeug {
-        link projekt FK
-        select typ
-        string bezeichnung
-        int menge
-        currency mietkosten
     }
 
     %% === BUDGET ===
@@ -166,16 +104,12 @@ erDiagram
 
     BudgetPosition {
         int position_nr PK
-        string name
-        select gruppe
     }
 
     BudgetVerfolgung {
+        string name PK
         link projekt FK
         link position FK
-        currency budget
-        currency obligo
-        currency differenz
     }
 
     %% === FREMDFERTIGUNG ===
@@ -184,9 +118,6 @@ erDiagram
 
     Firma {
         string name PK
-        string adresse
-        string kontakt_person
-        select bewertung
     }
 
     Fremdfertigung {
@@ -194,9 +125,6 @@ erDiagram
         link projekt FK
         link firma FK
         link leistung FK
-        select kategorie
-        currency auftragswert
-        select status
     }
 
     %% === HR ===
@@ -206,45 +134,16 @@ erDiagram
 
     Mitarbeiter {
         string name PK
-        string email
-        select rolle
-        boolean aktiv
     }
 
     MitarbeiterProjekt {
+        string name PK
         link mitarbeiter FK
         link projekt FK
-        select rolle
-        float ist_stunden
     }
 
     Abwesenheit {
+        string name PK
         link mitarbeiter FK
-        date von_datum
-        date bis_datum
-        select typ
-        select status
     }
 
-    %% === DOKUMENTACE ===
-    Besprechungsprotokoll {
-        link projekt FK
-        string titel
-        date datum
-        text inhalt
-    }
-
-    ProjektDokument {
-        link projekt FK
-        string titel
-        select kategorie
-        string dateipfad
-    }
-
-    MesseBereich {
-        link projekt FK
-        string bereich_nr
-        string bezeichnung
-        select kategorie
-        currency budget
-    }
